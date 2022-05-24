@@ -13,7 +13,6 @@
   "license": "ISC",
   "devDependencies": {
     "eslint-config-prettier": "^8.5.0",
-    "nodemon": "^2.0.15",
     "prettier": "^2.6.2"
   },
   "dependencies": {
@@ -21,6 +20,7 @@
     "@discordjs/rest": "^0.4.1",
     "amazon-cognito-identity-js": "^5.2.8",
     "discord-api-types": "^0.31.2",
-    "discord.js": "^13.6.0"
+    "discord.js": "^13.6.0",
+    "nodemon": "^2.0.15"
   }
 }

@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+  api:
+    build: .
+    environment:
+      - DISCORD_TOKEN=OTY3NTI0OTM2NTUxODk1MDUx.YmRj0A.Qgn849DFxCQpC2evCr2MB_suQ3A
+      - GUILD_ID=504590280675295233
+      - CLIENT_ID=967524936551895051
+      - COGNITO_USERPOOL_ID=eu-central-1_qjcEK6bV5
+      - COGNITO_CLIENT_ID=4gp7ftff543envgdr5alpa2105
+    ports:
+      - "3000:3000"
