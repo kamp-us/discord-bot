@@ -29,7 +29,6 @@ const goLive = {
       .setImage("https://bit.ly/3k5XcAT")
       .setTimestamp();
 
-    // channel.send("@everyone, yayindayim! haberiniz olsun.");
     channel.send({ embeds: [exampleEmbed] });
   },
 };

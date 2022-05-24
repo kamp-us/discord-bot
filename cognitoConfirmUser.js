@@ -1,7 +1,5 @@
 import { CognitoUser } from "amazon-cognito-identity-js";
-import { createUserPool } from "./createUserPool.js";
-
-const userPool = createUserPool();
+import { userPool } from "./config.js";
 
 export const cognitoConfirmUser = (username, code, callback) => {
   const cognitoUser = new CognitoUser({
@@ -11,14 +9,14 @@ export const cognitoConfirmUser = (username, code, callback) => {
 
   cognitoUser.confirmRegistration(code, true, (err, result) => {
     if (err) {
-      console.log(err);
       callback({
-        message: "Uyelik onaylanamadi. Lutfen tekrar deneyin.",
+        message:
+          "Bir hata oluştu. Lutfen tekrar deneyin. Eğer hata devam ederse, lütfen bize ulaşın.",
       });
-      return;
+    } else {
+      callback({
+        message: "Üyelik onaylandı.",
+      });
     }
-    callback({
-      message: "Uyelik onaylandi.",
-    });
   });
 };

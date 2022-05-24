@@ -16,9 +16,6 @@ const info = {
     .addSubcommand((subcommand) => subcommand.setName("deneme").setDescription("deneme")),
   async execute(interaction) {
     const subCommand = interaction.options.getSubcommand();
-    const a = interaction.isMessageComponent();
-    console.log(a, "AAAAAAAAAAAAAAAAA");
-    console.log(interaction, "INTERACTION");
 
     switch (subCommand) {
       case "user":
@@ -33,6 +30,10 @@ const info = {
         break;
 
       case "server":
+        const type = interaction.channel.type;
+        if (type === "DM") {
+          await interaction.reply("/info server komutu DM'de kullanılamaz.");
+        }
         await interaction.reply(
           `Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`
         );
@@ -40,17 +41,13 @@ const info = {
 
       case "deneme":
         await interaction.reply(
-          `
-        -> ${bold(
-          "elwyron"
-        )} <- ismiyle kayit oldunuz. Kayit oldugunuz maile aktivasyon kodu gonderilmistir.\n
-        ${bold(
-          "/uyelik-onayla <aktivasyon-kodu>"
-        )} komutunu calistirarak uyeliginizi onaylayabilirsiniz.\n
-        Hesabinizin sifresi -> ${spoiler(
-          "sifre"
-        )} <- olarak ayarlanmistir. Bu sifreyini kullanarak https://pano.kamp.us/login adresinden giris yaptiktan sonra sifrenizi degistirmenizi oneririz.\n
-        kamp.us'e hosgeldiniz!`
+          `yo ismiyle kayıt oldun` +
+            `\nHesabının şifresi -> ${spoiler("123")} <- olarak ayarlandı` +
+            `\nEmail adresine aktivasyon kodu gönderildi` +
+            `\n-----------------------------------------------------------` +
+            `\nŞimdi /uyelik-onayla <aktivasyon-kodu> komutunu çalıstırarak üyeliğini onaylayabilirsin` +
+            `\nhttps://pano.kamp.us/login adresinden giriş yaptıktan sonra şifreni değiştirmeni öneririz` +
+            `\n:tada::tada:  ${bold("pano.kamp.us'e hosgeldin!")}  :tada::tada:`
         );
     }
   },

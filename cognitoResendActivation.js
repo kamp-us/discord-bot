@@ -1,7 +1,5 @@
-import { createUserPool } from "./createUserPool.js";
 import { CognitoUser } from "amazon-cognito-identity-js";
-
-const userPool = createUserPool();
+import { userPool } from "./config.js";
 
 export const cognitoResendActivation = (username, callback) => {
   const cognitoUser = new CognitoUser({
@@ -12,7 +10,7 @@ export const cognitoResendActivation = (username, callback) => {
   cognitoUser.resendConfirmationCode((err) => {
     if (err) {
       callback({
-        message: "Aktivasyon kodu gonderme islemi basarisiz. Lutfen tekrar deneyiniz",
+        message: err.message,
       });
       return;
     }

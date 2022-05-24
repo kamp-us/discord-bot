@@ -1,5 +1,5 @@
 import { CognitoUserAttribute } from "amazon-cognito-identity-js";
-import { createUserPool } from "./createUserPool.js";
+import { userPool } from "./config.js";
 
 const generatePassword = (length) => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -9,8 +9,6 @@ const generatePassword = (length) => {
   }
   return password;
 };
-
-const userPool = createUserPool();
 
 export const cognitoSignUp = (username, email, callback) => {
   const emailData = {

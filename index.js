@@ -1,26 +1,28 @@
-import { DISCORD_TOKEN } from "./config.js";
+import { DISCORD_TOKEN, GUILD_ID } from "./config.js";
 import { createDiscordClient } from "./createDiscordClient.js";
 
 const client = await createDiscordClient();
 
-client.on("messageCreate", async (message) => {
-  console.log(message, MESSAGE);
-  if (message.content === "!ping") {
-    await message.channel.send("Pong!");
+const isUserInThisGuild = async (userID, guildID) => {
+  const guild = await client.guilds.fetch(guildID);
+
+  try {
+    await guild.members.fetch(userID);
+    return true;
+  } catch (error) {
+    return false;
   }
-  // if (message.author.bot) return;
-  // if (message.content.startsWith("!")) {
-  //   const command = message.content.slice(1);
-  //   const commandHandler = client.commandHandlers.get(command);
-  //   if (commandHandler) {
-  //     await commandHandler(message);
-  //   }
-  // }
-});
+};
 
 client.on("interactionCreate", async (interaction) => {
+  const userID = interaction.user.id;
+  const isUserInKampus = await isUserInThisGuild(userID, GUILD_ID);
+
+  if (!isUserInKampus) {
+    return;
+  }
+
   if (!interaction.isCommand()) return;
-  console.log(interaction);
 
   const command = client.commands.get(interaction.commandName);
 
@@ -38,4 +40,6 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // Login to Discord with your client's token
-client.login(DISCORD_TOKEN);
+client.login(DISCORD_TOKEN).then(() => {
+  console.log("Logged in!");
+});
