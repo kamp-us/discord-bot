@@ -1,9 +1,13 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { sendWithDefer } from "../sendWithDefer.js";
+import Debug from "debug";
+
+const debug = Debug("kampus-bot:commands:help");
 
 const help = {
   data: new SlashCommandBuilder().setName("yardim").setDescription("Yardım"),
   async execute(interaction) {
+    debug(interaction);
     await sendWithDefer(
       interaction,
       2000,
@@ -16,4 +20,5 @@ const help = {
   },
 };
 
+debug("registered");
 export default help;
