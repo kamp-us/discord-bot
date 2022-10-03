@@ -6,20 +6,46 @@ services:
       - DISCORD_TOKEN=OTY3NTI0OTM2NTUxODk1MDUx.YmRj0A.Qgn849DFxCQpC2evCr2MB_suQ3A
       - GUILD_ID=839425986817818654
       - CLIENT_ID=967524936551895051
-      - COGNITO_USERPOOL_ID=eu-central-1_IbWSTtlMK
-      - COGNITO_CLIENT_ID=4hv808r649t602m0d0ve8pba17
+      - PANO_URL=http://localhost:3000
       - DEBUG=kampus-bot*
     ports:
-      - "3000:3000"
+      - "6000:6000"
   deploycmds:
     build: .
-    entrypoint: node ./deploy-commands.js
+    entrypoint: node --loader ts-node/esm ./deploy-commands.ts
     environment:
       - DISCORD_TOKEN=OTY3NTI0OTM2NTUxODk1MDUx.YmRj0A.Qgn849DFxCQpC2evCr2MB_suQ3A
-      # - GUILD_ID=504590280675295233
       - GUILD_ID=839425986817818654
       - CLIENT_ID=967524936551895051
-      - COGNITO_USERPOOL_ID=eu-central-1_IbWSTtlMK
-      - COGNITO_CLIENT_ID=4hv808r649t602m0d0ve8pba17
+      - PANO_URL=http://localhost:3000
       - DEBUG=kampus-bot*
+  dev:
+    container_name: "bot"
+    build: .
+    volumes:
+      - ./src:/app/src
+      - ./tsconfig.json:/app/tsconfig.json
+    environment:
+      - DISCORD_TOKEN=OTg0OTU1NTcyOTE2OTg5OTcy.GXDIwB.316J4_CFOlbmeLs2drHJj7kIsnmqzEXpMtoEIo
+      - GUILD_ID=504590280675295233
+      - CLIENT_ID=984955572916989972
+      - PANO_URL=http://localhost:3000
+      - DEBUG=kampus-bot*
+    ports:
+      - "6000:6000"
+  devcmds:
+    build: .
+    entrypoint: node --loader ts-node/esm ./deploy-commands.ts
+    environment:
+      - DISCORD_TOKEN=OTg0OTU1NTcyOTE2OTg5OTcy.GXDIwB.316J4_CFOlbmeLs2drHJj7kIsnmqzEXpMtoEIo
+      - GUILD_ID=504590280675295233
+      - CLIENT_ID=984955572916989972
+      - PANO_URL=http://pano:3000
+      - DEBUG=kampus-bot*
+networks:
+  default:
+    external:
+      name: pano_default
+
+
 

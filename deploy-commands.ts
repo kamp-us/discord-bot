@@ -1,13 +1,13 @@
 import { REST } from "@discordjs/rest";
-import { CLIENT_ID, DISCORD_TOKEN, GUILD_ID } from "./config.js";
 import { readdirSync } from "fs";
 import { Routes } from "discord-api-types/v9";
+import { CLIENT_ID, DISCORD_TOKEN, GUILD_ID } from "./config";
 
-const commands = [];
-const commandFiles = readdirSync("./commands").filter((file) => file.endsWith(".js"));
+const commands: any[] = [];
+const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWith(".ts"));
 
 for (const file of commandFiles) {
-  const command = await import(`./commands/${file}`);
+  const command = await import(`./src/commands/${file}`);
   commands.push(command.default.data.toJSON());
 }
 

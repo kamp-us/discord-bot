@@ -2,26 +2,37 @@
   "name": "discord-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node ./index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/node": "^18.7.18",
     "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "tslib": "^2.4.0",
+    "typescript": "^4.8.3"
   },
   "dependencies": {
     "@discordjs/builders": "^0.13.0",
     "@discordjs/rest": "^0.4.1",
+    "@prisma/client": "^4.3.1",
     "amazon-cognito-identity-js": "^5.2.8",
+    "bcryptjs": "^2.4.3",
     "debug": "^4.3.4",
     "discord-api-types": "^0.31.2",
     "discord.js": "^13.6.0",
-    "nodemon": "^2.0.15"
+    "node-fetch": "^3.2.10",
+    "nodemon": "^2.0.15",
+    "tiny-invariant": "^1.2.0",
+    "ts-node": "^10.9.1",
+    "unique-names-generator": "^4.7.1"
   }
 }

@@ -1,9 +1,9 @@
-import { DISCORD_TOKEN, GUILD_ID } from "./config.js";
-import { createDiscordClient } from "./createDiscordClient.js";
+import { DISCORD_TOKEN, GUILD_ID } from "./config";
+import { createDiscordClient } from "./createDiscordClient";
 
 const client = await createDiscordClient();
 
-const isUserInThisGuild = async (userID, guildID) => {
+const isUserInThisGuild = async (userID: string, guildID: string) => {
   const guild = await client.guilds.fetch(guildID);
 
   try {

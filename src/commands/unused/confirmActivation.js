@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { cognitoConfirmUser } from "../cognitoConfirmUser.js";
-import { sendWithDefer } from "../sendWithDefer.js";
+import { cognitoConfirmUser } from "../../../cognitoConfirmUser.js";
+import { sendWithDefer } from "../../../sendWithDefer.js";
 
 const confirmActivation = {
   data: new SlashCommandBuilder()

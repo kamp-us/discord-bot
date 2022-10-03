@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { cognitoResendActivation } from "../cognitoResendActivation.js";
-import { sendWithDefer } from "../sendWithDefer.js";
+import { cognitoResendActivation } from "../../../cognitoResendActivation.js";
+import { sendWithDefer } from "../../../sendWithDefer.js";
 
 const resendActivation = {
   data: new SlashCommandBuilder()

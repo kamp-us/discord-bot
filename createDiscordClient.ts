@@ -9,7 +9,7 @@ export const createDiscordClient = async () => {
   const client = new Client({
     intents,
     partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
-  });
+  }) as Client & { commands: Collection<string, any> };
 
   // When the client is ready, run this code (only once)
   client.once("ready", () => {
@@ -17,10 +17,10 @@ export const createDiscordClient = async () => {
   });
 
   client.commands = new Collection();
-  const commandFiles = readdirSync("./commands").filter((file) => file.endsWith(".js"));
+  const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWith(".ts"));
 
   for (const file of commandFiles) {
-    const command = await import(`./commands/${file}`);
+    const command = await import(`./src/commands/${file}`);
     client.commands.set(command.default.data.name, command);
   }
 

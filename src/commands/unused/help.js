@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { sendWithDefer } from "../sendWithDefer.js";
+import { sendWithDefer } from "../../../sendWithDefer.js";
 import Debug from "debug";
 
 const debug = Debug("kampus-bot:commands:help");

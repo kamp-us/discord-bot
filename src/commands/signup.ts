@@ -1,6 +1,9 @@
 import { bold, SlashCommandBuilder, spoiler } from "@discordjs/builders";
-import { cognitoSignUp } from "../cognitoSignUp.js";
-import { sendWithDefer } from "../sendWithDefer.js";
+import { signUp } from "../handlers/sign-up";
+import { sendWithDefer } from "../../sendWithDefer";
+
+const usernameOption = "kullanici-adi";
+const emailOption = "e-posta";
 
 const signup = {
   data: new SlashCommandBuilder()
@@ -8,7 +11,7 @@ const signup = {
     .setDescription("pano.kamp.us'a üye olmak için kullanılır")
     .addStringOption((option) =>
       option
-        .setName("kullanici-adi")
+        .setName(usernameOption)
         .setDescription("pano.kamp.us'e kayıt olmak için kullanıcı adı")
         .setRequired(true)
     )
@@ -18,29 +21,27 @@ const signup = {
         .setDescription("pano.kamp.us'e kayıt olmak için email adresi")
         .setRequired(true)
     ),
-  async execute(interaction) {
-    const email = interaction.options.getString("e-posta");
-    const username = interaction.options.getString("kullanici-adi");
+  async execute(interaction: any) {
+    const email = interaction.options.getString(emailOption);
+    const username = interaction.options.getString(usernameOption);
     const loginUrl = "https://pano.kamp.us/login";
 
-    cognitoSignUp(username, email, async ({ username, password, error }) => {
-      if (error) {
-        await sendWithDefer(interaction, 2000, error);
-        return;
-      }
+    const { data, errors } = await signUp(username, email);
+
+    if (errors) {
+      await sendWithDefer(interaction, 4000, errors);
+    } else {
       await sendWithDefer(
         interaction,
         2000,
         `${username} ismiyle kayıt oldun` +
-          `\nHesabının şifresi -> ${spoiler(password)} <- olarak ayarlandı` +
-          `\nEmail adresine aktivasyon kodu gönderildi` +
+          `\nHesabının şifresi -> ${spoiler(data.password)} <- olarak ayarlandı` +
           `\n-----------------------------------------------------------` +
-          `\n/uyelik-onayla <aktivasyon-kodu> komutunu çalıstırarak üyeliğini onaylayabilirsin` +
           `\n/yardim komutunu çalıstırarak bütün komutları görebilirsin` +
           `\nhttps://pano.kamp.us/login adresinden giriş yaptıktan sonra şifreni değiştirmeni öneririz` +
           `\n:tada::tada:  ${bold(loginUrl)}  :tada::tada:`
       );
-    });
+    }
   },
 };
 
