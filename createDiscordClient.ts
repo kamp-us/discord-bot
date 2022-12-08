@@ -53,5 +53,34 @@ export const createDiscordClient = async () => {
     }
   });
 
+  console.log("COMMANDS ARE READY!");
+
+  // ----------------------------------------------------------------
+
+  console.log("INITIALIZING EVENTS");
+
+  const eventFiles = readdirSync("./src/events/").filter((file) => file.endsWith(".ts"));
+
+  for (const file of eventFiles) {
+    const event = await import(`./src/events/${file}`);
+
+    if (event.default) {
+      const eventName = event.default.name;
+
+      if (event.once) {
+        client.once(eventName, (...args) => event.default.execute(...args));
+      } else {
+        client.on(eventName, (...args) => event.default.execute(...args));
+      }
+
+      console.log("[SUCCESS]", file, "event file loaded.");
+    } else {
+      console.log("[ERROR]", file, "event file is not loaded.");
+      continue;
+    }
+  }
+
+  console.log("EVENTS ARE READY!");
+
   return client;
 };
