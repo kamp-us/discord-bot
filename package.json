@@ -5,6 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
+    "deploy-cmds": "ts-node ./deploy-commands.ts",
     "start": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node ./index.ts"
