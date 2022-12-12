@@ -4,7 +4,7 @@ import {
   EMOJI_NAME,
   ROLE_NAME,
   RULES_CHANNEL_NAME,
-  RULES_MESSAGE_CONTAINS,
+  RULES_MESSAGE_ID,
 } from "../../config";
 import { client } from "../../createDiscordClient";
 
@@ -14,9 +14,9 @@ const messageReactionRemove = {
     // Fetch the message content.
     if (reaction.message.partial) await reaction.message.fetch();
 
-    // Check if the message content starts with the string in the RULES_MESSAGE_CONTAINS variable.
+    // Check if the message content starts with the string in the RULES_MESSAGE_ID variable.
     // If it does not, it will return.
-    if (!reaction.message.content.startsWith(RULES_MESSAGE_CONTAINS)) return;
+    if (reaction.message.id !== RULES_MESSAGE_ID) return;
 
     // Get the guildId, channelId and emoji name from the reaction.
     const msgGuildId = reaction.message.guildId;
