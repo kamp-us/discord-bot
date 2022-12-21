@@ -5,12 +5,12 @@ import { readdirSync } from "fs";
 // 32767 means every FLAGS in discord.js in bits
 const intents = new Intents(32767);
 
-export const client = new Client({
-  intents,
-  partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
-}) as Client & { commands: Collection<string, any> };
-
 export const createDiscordClient = async () => {
+  const client = new Client({
+    intents,
+    partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
+  }) as Client & { commands: Collection<string, any> };
+
   client.commands = new Collection();
 
   console.log("INITIALIZING COMMANDS");
@@ -46,7 +46,7 @@ export const createDiscordClient = async () => {
       if (event.once) {
         client.once(eventName, (...args) => event.default.execute(...args));
       } else {
-        client.on(eventName, (...args) => event.default.execute(...args));
+        client.on(eventName, (...args) => event.default.execute(...args, client));
       }
 
       console.log("[SUCCESS]", file, "event file loaded.");

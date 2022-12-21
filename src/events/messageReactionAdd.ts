@@ -6,11 +6,11 @@ import {
   RULES_CHANNEL_NAME,
   RULES_MESSAGE_ID,
 } from "../../config";
-import { client } from "../../createDiscordClient";
+import { checkChannelIdsAndReactionName } from "../utils";
 
 const messageReactionAdd = {
   name: "messageReactionAdd",
-  async execute(reaction, user) {
+  async execute(reaction, user, client) {
     // Fetch the message content.
     if (reaction.message.partial) await reaction.message.fetch();
 
@@ -18,10 +18,8 @@ const messageReactionAdd = {
     // If it does not, it will return.
     if (reaction.message.id !== RULES_MESSAGE_ID) return;
 
-    // Get the guildId, channelId and emoji name from the reaction.
+    // Get the guildId.
     const msgGuildId = reaction.message.guildId;
-    const msgChannelId = reaction.message.channelId;
-    const emojiName = reaction.emoji.name;
 
     // Get the guild from the guildId of the reacted message.
     const guild = client.guilds.cache.get(msgGuildId);
@@ -29,15 +27,21 @@ const messageReactionAdd = {
     // Find the rules channel with the name RULES_CHANNEL_NAME.
     const rulesChannel = guild?.channels.cache.find((ch) => ch.name === RULES_CHANNEL_NAME);
 
+    // Check if the channel id of the reacted message is the same as the channel id of the RulesChannel and the name of the reaction emoji is the same as EMOJI_NAME.
+    const checkChannelsAndEmoji = checkChannelIdsAndReactionName(
+      rulesChannel,
+      reaction,
+      EMOJI_NAME
+    );
+
     // Find the bot log channel with the name BOT_LOG_CHANNEL_NAME.
     const botLogChannel = guild?.channels.cache.find((ch) => ch.name === BOT_LOG_CHANNEL_NAME);
 
     // Resolve the botLogChannel to be able to send messages.
     const resolvedBotLogCh = reaction.client.channels.resolve(botLogChannel);
 
-    // Check if the guild exists, rulesChannel exists and if the ID of the rulesChannel is the same as the channel ID of the reacted message,
-    // emojiName is the same as EMOJI_NAME in the config. If any of these are not true, it will return.
-    if (!guild || rulesChannel?.id !== msgChannelId || emojiName !== EMOJI_NAME) return;
+    // Check if the guild does not exist or checkChannelsAndEmoji is false. If so, it will return.
+    if (!guild || !checkChannelsAndEmoji) return;
 
     // Find the role with the name ROLE_NAME.
     const role = guild.roles.cache.find((r) => r.name === ROLE_NAME);
