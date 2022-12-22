@@ -1,4 +1,3 @@
-import { Permissions } from "discord.js";
 import {
   BOT_LOG_CHANNEL_NAME,
   EMOJI_NAME,
@@ -6,7 +5,7 @@ import {
   RULES_CHANNEL_NAME,
   RULES_MESSAGE_ID,
 } from "../../config";
-import { checkChannelIdsAndReactionName } from "../utils";
+import { checkChannelIdsAndReactionName, addRole } from "../utils";
 
 const messageReactionAdd = {
   name: "messageReactionAdd",
@@ -34,63 +33,10 @@ const messageReactionAdd = {
       EMOJI_NAME
     );
 
-    // Find the bot log channel with the name BOT_LOG_CHANNEL_NAME.
-    const botLogChannel = guild?.channels.cache.find((ch) => ch.name === BOT_LOG_CHANNEL_NAME);
-
-    // Resolve the botLogChannel to be able to send messages.
-    const resolvedBotLogCh = reaction.client.channels.resolve(botLogChannel);
-
     // Check if the guild does not exist or checkChannelsAndEmoji is false. If so, it will return.
-    if (!guild || !checkChannelsAndEmoji) return;
-
-    // Find the role with the name ROLE_NAME.
-    const role = guild.roles.cache.find((r) => r.name === ROLE_NAME);
-
-    // Checking if the role exists. If it does not exist, it will send a message to the bot log channel.
-    if (!role) {
-      // Check if the bot log channel exists. If it does not exist, it will not send a message to
-      // the bot log channel.
-      if (botLogChannel) {
-        resolvedBotLogCh.send("Role not found.");
-      }
-      return;
+    if (guild && checkChannelsAndEmoji) {
+      addRole(guild, user, ROLE_NAME);
     }
-
-    // Check if the bot has the permission to manage roles.
-    const botCanManageRoles = guild.me?.permissions.has(Permissions.FLAGS.MANAGE_ROLES);
-
-    // Check if the Manage Roles permission exists. If it does not exist, it will send a message to the bot log channel.
-    if (!botCanManageRoles) {
-      // Check if the bot log channel exists. If it does not exist, it will not send a message to
-      // the bot log channel.
-      if (botLogChannel) {
-        resolvedBotLogCh.send("Bot cannot manage roles.");
-      }
-      return;
-    }
-
-    // Get the member who reacted to the message.
-    const member = guild.members.cache.get(user.id);
-
-    // Add role to member.
-    const roleAdd = member?.roles.add(role);
-
-    // Check if the role was added to the member. If it was, it will log a message to the console.
-    // If it was not, it will send a message to the bot log channel.
-    roleAdd
-      ?.then((m) => console.log(`ADD "${role.name}" ROLE FROM "${m.user.username}"`))
-      .catch((e) => {
-        // Check if the bot log channel exists. If it does not exist, it will not send a message to
-        // the bot log channel.
-        if (botLogChannel) {
-          resolvedBotLogCh.send(
-            `An error occurred while trying to add the "${role.name}" role to member "${user.tag}". Check console log.`
-          );
-        }
-
-        // Log the error to the console.
-        console.log("ADD ROLE ERROR", e);
-      });
   },
 };
 
