@@ -1,10 +1,4 @@
-import {
-  BOT_LOG_CHANNEL_NAME,
-  EMOJI_NAME,
-  ROLE_NAME,
-  RULES_CHANNEL_NAME,
-  RULES_MESSAGE_ID,
-} from "../../config";
+import { EMOJI_NAME, ROLE_NAME, RULES_CHANNEL_NAME, RULES_MESSAGE_ID } from "../../config";
 import { checkChannelIdsAndReactionName, addRole } from "../utils";
 
 const messageReactionAdd = {
