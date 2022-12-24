@@ -1,6 +1,6 @@
 import { Permissions } from "discord.js";
 import { adjectives, animals, colors, uniqueNamesGenerator } from "unique-names-generator";
-import { BOT_LOG_CHANNEL_NAME } from "../config";
+import { BOT_LOG_CHANNEL_NAME, EMOJI_NAME, RULES_MESSAGE_ID } from "../config";
 
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
@@ -23,12 +23,29 @@ export function generatePassword() {
  * @param emojiName - The name of the emoji you want to check for.
  * @returns a boolean value.
  */
-export function checkChannelIdsAndReactionName(channel, reaction, emojiName) {
+export function checkChannelIdsAndReactionName(rulesChannelId, reaction) {
   // Get the message channelId and emoji name from the reaction.
   const msgChannelId = reaction.message.channelId;
   const reactionEmojiName = reaction.emoji.name;
 
-  return channel?.id === msgChannelId && reactionEmojiName === emojiName;
+  return rulesChannelId === msgChannelId && reactionEmojiName === EMOJI_NAME;
+}
+
+/**
+ * Fetch the message if it is partial.
+ * @param obj - object.
+ */
+export async function fetchPartialMessage(obj) {
+  if (obj.message.partial) await obj.message.fetch();
+}
+
+/**
+ * Check if the reaction is given to the rules message.
+ * @param reaction - Reaction object
+ * @returns boolean
+ */
+export function isReactionMessage(reaction) {
+  return reaction.message.id === RULES_MESSAGE_ID;
 }
 
 /**
@@ -61,14 +78,23 @@ export function sendLog(guild, message) {
 }
 
 /**
+ * Callback function for checking names
+ * @param name
+ * @returns cb function
+ */
+export function selectByNameCallback(name) {
+  return (obj) => obj.name === name;
+}
+
+/**
  * Add role to member.
  * @param guild object
  * @param user object
- * @param roleName string
+ * @param cb callback
  */
-export function addRole(guild, user, roleName) {
+export async function addRole(guild, user, cb) {
   // Find the role with the name roleName.
-  const role = guild.roles.cache.find((r) => r.name === roleName);
+  const role = guild.roles.cache.find(cb);
 
   // Checking if the role exists. If it does not exist, it will send a message to the bot log channel.
   if (!role) {
@@ -85,34 +111,32 @@ export function addRole(guild, user, roleName) {
   // Get the member who reacted to the message.
   const member = guild.members.cache.get(user.id);
 
-  // Add role to member.
-  const roleAdd = member?.roles.add(role);
-
   // Check if the role was added to the member. If it was, it will log a message to the console.
   // If it was not, it will send a message to the bot log channel.
-  roleAdd
-    ?.then((m) => console.log(`ADD "${role.name}" ROLE FROM "${m.user.username}"`))
-    .catch((e) => {
-      sendLog(
-        guild,
+  try {
+    // Add role to member.
+    const m = await member?.roles.add(role);
+    console.log(`ADD "${role.name}" ROLE TO "${m.user.username}"`);
+  } catch (e) {
+    sendLog(
+      guild,
+      `An error occurred while trying to add the "${role.name}" role to member "${member.user.tag}". Check console log.`
+    );
 
-        `An error occurred while trying to add the "${role.name}" role to member "${member.user.tag}". Check console log.`
-      );
-
-      // Log the error to the console.
-      console.log("ADD ROLE ERROR", e);
-    });
+    // Log the error to the console.
+    console.log("ADD ROLE ERROR", e);
+  }
 }
 
 /**
  * Remove role from member.
  * @param guild object
  * @param user object
- * @param roleName string
+ * @param cb callback
  */
-export function removeRole(guild, user, roleName) {
+export async function removeRole(guild, user, cb) {
   // Find the role with the name roleName.
-  const role = guild.roles.cache.find((r) => r.name === roleName);
+  const role = guild.roles.cache.find(cb);
 
   // Checking if the role exists. If it does not exist, it will send a message to the bot log channel.
   if (!role) {
@@ -129,21 +153,20 @@ export function removeRole(guild, user, roleName) {
   // Get the member who reacted to the message.
   const member = guild.members.cache.get(user.id);
 
-  // Remove the role from member.
-  const roleRemove = member?.roles.remove(role);
-
   // Check if the role has been removed from the member. If so, it will log a message to the console.
   // If not, the bot will send a message to the log channel.
-  roleRemove
-    ?.then((m) => console.log(`REMOVE "${role.name}" ROLE FROM "${m.user.username}"`))
-    .catch((e) => {
-      sendLog(
-        guild,
+  try {
+    // Remove the role from member.
+    const m = await member?.roles.remove(role);
+    console.log(`REMOVE "${role.name}" ROLE FROM "${m.user.username}"`);
+  } catch (e) {
+    sendLog(
+      guild,
 
-        `An error occurred while trying to remove the "${role.name}" role from "${member.user.tag}". Check console log.`
-      );
+      `An error occurred while trying to remove the "${role.name}" role from "${member.user.tag}". Check console log.`
+    );
 
-      // Log the error to the console.
-      console.log("REMOVE ROLE ERROR", e);
-    });
+    // Log the error to the console.
+    console.log("REMOVE ROLE ERROR", e);
+  }
 }
