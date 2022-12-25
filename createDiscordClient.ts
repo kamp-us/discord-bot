@@ -46,7 +46,7 @@ export const createDiscordClient = async () => {
       if (event.once) {
         client.once(eventName, (...args) => event.default.execute(...args));
       } else {
-        client.on(eventName, (...args) => event.default.execute(...args));
+        client.on(eventName, (...args) => event.default.execute(...args, client));
       }
 
       console.log("[SUCCESS]", file, "event file loaded.");
