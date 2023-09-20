@@ -1,28 +1,57 @@
-// Create a new client instance
-import { Client, Collection, Intents } from "discord.js";
-import { readdirSync } from "fs";
+import { Client, Collection, GatewayIntentBits, Partials } from "discord.js";
+import { readdirSync, realpathSync } from "fs";
+import { join } from "path";
 
-// 32767 means every FLAGS in discord.js in bits
-const intents = new Intents(32767);
+export interface DiscordClient extends Client {
+  commands: Collection<string, any>;
+}
 
 export const createDiscordClient = async () => {
   const client = new Client({
-    intents,
-    partials: ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
-  }) as Client & { commands: Collection<string, any> };
-
-  // When the client is ready, run this code (only once)
-  client.once("ready", () => {
-    console.log("Ready!");
-  });
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildScheduledEvents,
+      GatewayIntentBits.GuildInvites,
+      GatewayIntentBits.GuildPresences,
+      GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.GuildMessageTyping,
+      GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.DirectMessageReactions,
+      GatewayIntentBits.DirectMessageTyping,
+      GatewayIntentBits.MessageContent,
+    ],
+    partials: [
+      Partials.Message,
+      Partials.Channel,
+      Partials.Reaction,
+      Partials.User,
+      Partials.GuildMember,
+    ],
+  }) as DiscordClient;
 
   client.commands = new Collection();
-  const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWith(".ts"));
 
-  for (const file of commandFiles) {
-    const command = await import(`./src/commands/${file}`);
-    client.commands.set(command.default.data.name, command);
-  }
+  const dirname = realpathSync(".");
+  // When the client is ready, run this code (only once)
+  client.once("ready", async () => {
+    console.log("Ready!");
+
+    console.log("REGISTERING HANDLERS");
+    const handlerFolderPath = join(dirname, "src/handlers");
+    const handlerFiles = readdirSync(handlerFolderPath).filter((file) => {
+      return file.endsWith(".handler.ts");
+    });
+    console.log(handlerFiles);
+    for (const file of handlerFiles) {
+      console.log("REGISTERING HANDLE: ", file);
+      const filePath = join(handlerFolderPath, file);
+      const handler = await import(filePath);
+      handler.default(client);
+    }
+  });
 
   return client;
 };

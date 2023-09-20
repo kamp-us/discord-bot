@@ -1,11 +1,10 @@
 import { bold, SlashCommandBuilder, spoiler } from "@discordjs/builders";
-import { signUp } from "../handlers/sign-up";
-import { sendWithDefer } from "../../sendWithDefer";
+import { sendWithDefer } from "../../../sendWithDefer";
 
 const usernameOption = "kullanici-adi";
 const emailOption = "e-posta";
 
-const signup = {
+export const signup = {
   data: new SlashCommandBuilder()
     .setName("uye-ol")
     .setDescription("pano.kamp.us'a üye olmak için kullanılır")
@@ -26,23 +25,15 @@ const signup = {
     const username = interaction.options.getString(usernameOption);
     const loginUrl = "https://pano.kamp.us/login";
 
-    const { data, errors } = await signUp(username, email);
-
-    if (errors) {
-      await sendWithDefer(interaction, 4000, errors);
-    } else {
-      await sendWithDefer(
-        interaction,
-        2000,
-        `${username} ismiyle kayıt oldun` +
-          `\nHesabının şifresi -> ${spoiler(data.password)} <- olarak ayarlandı` +
-          `\n-----------------------------------------------------------` +
-          `\n/yardim komutunu çalıstırarak bütün komutları görebilirsin` +
-          `\nhttps://pano.kamp.us/login adresinden giriş yaptıktan sonra şifreni değiştirmeni öneririz` +
-          `\n:tada::tada:  ${bold(loginUrl)}  :tada::tada:`
-      );
-    }
+    await sendWithDefer(
+      interaction,
+      2000,
+      `${username} ismiyle kayıt oldun` +
+        `\nHesabının şifresi -> ${spoiler("hehehhe")} <- olarak ayarlandı` +
+        `\n-----------------------------------------------------------` +
+        `\n/yardim komutunu çalıstırarak bütün komutları görebilirsin` +
+        `\nhttps://pano.kamp.us/login adresinden giriş yaptıktan sonra şifreni değiştirmeni öneririz` +
+        `\n:tada::tada:  ${bold(loginUrl)}  :tada::tada:`
+    );
   },
 };
-
-export default signup;

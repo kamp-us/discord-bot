@@ -1,6 +1,5 @@
-import { REST } from "@discordjs/rest";
+import { REST, Routes } from "discord.js";
 import { readdirSync } from "fs";
-import { Routes } from "discord-api-types/v9";
 import { CLIENT_ID, DISCORD_TOKEN, GUILD_ID } from "./config";
 
 const commands: any[] = [];
@@ -8,12 +7,12 @@ const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWit
 
 for (const file of commandFiles) {
   const command = await import(`./src/commands/${file}`);
+  console.log(file, "file");
   commands.push(command.default.data.toJSON());
+  console.log(commands);
 }
 
-console.log(commands, "COMMANDS");
-
-const rest = new REST({ version: "9" }).setToken(DISCORD_TOKEN);
+const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
 
 (async (env) => {
   try {

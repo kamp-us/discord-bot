@@ -1,5 +1,4 @@
 import fetch, { FormData } from "node-fetch";
-import { generatePassword, validateEmail, validateUsername } from "../utils";
 
 const Error = (message: string) => {
   return { errors: message, data: { user: {}, password: "" } };
@@ -19,13 +18,6 @@ function isEmpty(obj) {
 }
 
 export const signUp = async (username: string, email: string) => {
-  if (!validateUsername(username)) {
-    return Error("Username is invalid");
-  }
-  if (!validateEmail(email)) {
-    return Error("Email is invalid");
-  }
-
   // const existingUserByEmail = await getUserByEmail(prisma, email);
   // const existingUserByUsername = await getUserByUsername(prisma, username);
   // if (existingUserByEmail) {
@@ -35,11 +27,9 @@ export const signUp = async (username: string, email: string) => {
   //   return Error("This username is taken");
   // }
 
-  const password = generatePassword();
   const form = new FormData();
   form.append("username", username);
   form.append("email", email);
-  form.append("password", password);
 
   try {
     const url = "https://pano.kamp.us/api/auth/register";
@@ -53,7 +43,7 @@ export const signUp = async (username: string, email: string) => {
       const errorMessage = getErrorMessage(user.errors);
       return Error(errorMessage);
     } else {
-      return { errors: "", data: { user: user.data, password } };
+      return { errors: "", data: { user: user.data } };
     }
   } catch (e) {
     return Error(`Error: ${e}`);
