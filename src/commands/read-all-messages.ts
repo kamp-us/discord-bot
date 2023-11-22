@@ -1,49 +1,73 @@
-import { CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
+import { Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import { setTimeout } from "timers/promises";
 import { writeFile } from "fs";
+import { formatDate } from "../utils";
 
-async function fetchMessages(client, channelID, N_DAYS_AGO = 7) {
+type Message = {
+  author: string;
+  content: string;
+  uid: string;
+  createdAt: string;
+};
+
+async function fetchMessages(client: Client, channelID: string, N_DAYS_AGO = 7) {
   const channel = (await client.channels.fetch(channelID)) as TextChannel; // Replace with your channel ID
-  const endTime = Date.now() - N_DAYS_AGO * 24 * 60 * 60 * 1000;
+  const today = new Date();
+  const endDate = new Date(today.getTime() - N_DAYS_AGO * 24 * 60 * 60 * 1000);
+  endDate.setHours(0, 0, 0, 0);
+  const endTime = endDate.getTime();
 
   let lastId: string | undefined;
-  let count = 0;
+  let messagesCollected: Message[] = [];
 
   while (true) {
     const messages = await channel.messages.fetch({
-      limit: 100, // Adjust as needed
+      limit: 100,
       before: lastId,
     });
-    const filteredMessages = messages.filter((m) => m.createdTimestamp > endTime);
-    const allMessages = {};
 
-    // Process the messages here
-    filteredMessages.forEach((message) => {
-      allMessages[message.author.tag] = { content: message.content, uid: message.author.id };
-    });
-    const timestamp = filteredMessages.last()?.createdTimestamp as number;
-
-    if (filteredMessages.size < 100 || messages.size === 0 || timestamp <= endTime) {
+    // Stop if no more messages are retrieved
+    if (messages.size === 0) {
+      console.log("No more messages to fetch.");
       break;
     }
 
-    // Save the ID of the last message to paginate
-    count += filteredMessages.size;
-    lastId = filteredMessages.last()?.id;
+    // Filter and collect messages
+    const filteredMessages = messages.filter((m) => m.createdTimestamp > endTime);
+    filteredMessages.toJSON().forEach((m) =>
+      messagesCollected.push({
+        author: m.author.username,
+        content: m.content,
+        uid: m.author.id,
+        createdAt: formatDate(m.createdTimestamp),
+      })
+    );
 
-    // To handle rate limits, wait before making a new request
-    await setTimeout(1000);
+    // Break if no messages in the current fetch are within the time range
+    if (filteredMessages.size === 0) {
+      writeToFile(messagesCollected);
+      return messagesCollected;
+    }
 
-    writeFile(`${count}` + ".json", JSON.stringify(allMessages), (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("File written successfully\n");
-      }
-    });
+    // Update lastId for the next iteration
+    lastId = messages.lastKey();
+    console.log(messagesCollected.length, "messages collected so far.");
+
+    await setTimeout(1000); // Respect rate limits
   }
 
   console.log("Finished fetching messages.");
+}
+
+async function writeToFile(messages: any) {
+  const fileName = `messages_${new Date().toUTCString()}${Object.keys(messages).length}.json`;
+  writeFile(fileName, JSON.stringify(messages, null, 2), (err) => {
+    if (err) {
+      console.error("Error writing file:", err);
+    } else {
+      console.log("Messages saved to messages.json");
+    }
+  });
 }
 
 const getMessages = {
@@ -53,7 +77,7 @@ const getMessages = {
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
     const channelID = "1158288028511522877";
-    const messages = await fetchMessages(client, channelID);
+    const messages = await fetchMessages(client, channelID, 7);
   },
 };
 
