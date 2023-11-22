@@ -6,7 +6,7 @@ export interface DiscordClient extends Client {
   commands: Collection<string, any>;
 }
 
-export const createDiscordClient = async () => {
+const createDiscordClient = async () => {
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -22,6 +22,7 @@ export const createDiscordClient = async () => {
       GatewayIntentBits.DirectMessageReactions,
       GatewayIntentBits.DirectMessageTyping,
       GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildModeration,
     ],
     partials: [
       Partials.Message,
@@ -55,3 +56,5 @@ export const createDiscordClient = async () => {
 
   return client;
 };
+
+export const client = await createDiscordClient();

@@ -2,6 +2,8 @@ import { Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "di
 import { setTimeout } from "timers/promises";
 import { writeFile } from "fs";
 import { formatDate } from "../utils";
+import _ from "lodash";
+import { GUNAYDIN_CHANNEL_ID } from "../utils/constants";
 
 type Message = {
   author: string;
@@ -46,6 +48,8 @@ async function fetchMessages(client: Client, channelID: string, N_DAYS_AGO = 7) 
     // Break if no messages in the current fetch are within the time range
     if (filteredMessages.size === 0) {
       writeToFile(messagesCollected);
+      const grouped = _.groupBy(messagesCollected, "uid");
+      writeToFile(grouped, "grouped.json");
       return messagesCollected;
     }
 
@@ -59,8 +63,10 @@ async function fetchMessages(client: Client, channelID: string, N_DAYS_AGO = 7) 
   console.log("Finished fetching messages.");
 }
 
-async function writeToFile(messages: any) {
-  const fileName = `messages_${new Date().toUTCString()}${Object.keys(messages).length}.json`;
+async function writeToFile(
+  messages: any,
+  fileName = `messages_${new Date().toUTCString()}${Object.keys(messages).length}.json`
+) {
   writeFile(fileName, JSON.stringify(messages, null, 2), (err) => {
     if (err) {
       console.error("Error writing file:", err);
@@ -76,8 +82,8 @@ const getMessages = {
     .setDescription("Fetches messages from a channel"),
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
-    const channelID = "1158288028511522877";
-    const messages = await fetchMessages(client, channelID, 7);
+    const channelID = GUNAYDIN_CHANNEL_ID;
+    const messages = await fetchMessages(client, channelID, 14);
   },
 };
 

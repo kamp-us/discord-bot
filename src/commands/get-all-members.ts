@@ -1,11 +1,11 @@
 import { Client, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { writeFile } from "fs";
-import { GUILD_ID } from "../../config";
 
 type Member = {
   username: string;
   uid: string;
   joinedAt?: string;
+  roles: string[];
 };
 
 export async function fetchAllMembers(client: Client, guildID: string) {
@@ -21,6 +21,7 @@ export async function fetchAllMembers(client: Client, guildID: string) {
       membersCollected.push({
         username: member.user.username,
         uid: member.user.id,
+        roles: member.roles.cache.map((role) => role.name),
       });
     });
     console.log("Finished fetching members. Total members:", membersCollected.length);
@@ -47,8 +48,10 @@ const getAllMembers = {
     .setDescription("Fetches all members of the guild"),
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
-    const channelID = "1158288028511522877";
-    const members = await fetchAllMembers(client, GUILD_ID);
+    const guildID = interaction.guildId;
+    if (guildID === null) return console.error("Guild ID is null.");
+
+    const members = await fetchAllMembers(client, guildID);
   },
 };
 
