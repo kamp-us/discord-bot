@@ -1,5 +1,6 @@
 import { Client, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { writeFile } from "fs";
+import * as _ from "lodash";
 
 type Member = {
   username: string;
@@ -26,13 +27,16 @@ export async function fetchAllMembers(client: Client, guildID: string) {
     });
     console.log("Finished fetching members. Total members:", membersCollected.length);
     writeToFile(membersCollected);
+    writeToFile(_.groupBy(membersCollected, "uid"), "grouped.json");
   } catch (error) {
     console.error("Error fetching members:", error);
   }
 }
 
-async function writeToFile(members: any) {
-  const fileName = `members_${new Date().toUTCString()}${Object.keys(members).length}.json`;
+async function writeToFile(
+  members: any,
+  fileName = `members_${new Date().toUTCString()}${Object.keys(members).length}.json`
+) {
   writeFile(fileName, JSON.stringify(members, null, 2), (err) => {
     if (err) {
       console.error("Error writing file:", err);

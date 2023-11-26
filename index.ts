@@ -1,7 +1,7 @@
-import { DISCORD_TOKEN } from "./config";
 import { client } from "./createDiscordClient";
+import "dotenv/config";
 
 // Login to Discord with your client's token
-client.login(DISCORD_TOKEN).then(() => {
+client.login(process.env.DISCORD_TOKEN).then(() => {
   console.log("Logged in!");
 });

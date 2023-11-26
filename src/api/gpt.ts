@@ -1,5 +1,4 @@
 import https from "https";
-import { CHATGPT_API_KEY } from "../../config";
 
 class ChatGPTHandler {
   private messageContent: string;
@@ -13,7 +12,7 @@ class ChatGPTHandler {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        Authorization: `Bearer ${CHATGPT_API_KEY}`,
+        Authorization: `Bearer ${process.env.CHATGPT_API_KEY}`,
       },
     };
     this.messageContent = "";

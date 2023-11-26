@@ -1,6 +1,6 @@
 import { REST, Routes } from "discord.js";
 import { readdirSync } from "fs";
-import { CLIENT_ID, DISCORD_TOKEN, GUILD_ID } from "./config";
+import { CLIENT_ID, DISCORD_TOKEN, KAMPUS_GUILD_ID } from "./config";
 
 const commands: any[] = [];
 const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWith(".ts"));
@@ -19,7 +19,9 @@ const rest = new REST({ version: "10" }).setToken(DISCORD_TOKEN);
     console.log("Started refreshing application (/) commands.");
     if (env === "production") {
       console.log("Started refreshing guild (/) commands.");
-      await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), { body: commands });
+      await rest.put(Routes.applicationGuildCommands(CLIENT_ID, KAMPUS_GUILD_ID), {
+        body: commands,
+      });
     }
     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
 
