@@ -27,4 +27,4 @@ ADD . .
 
 # CMD ["./node_modules/.bin/nodemon", "index.ts"]
 # CMD ["node", "--loader", "ts-node/esm", "index.ts"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
