@@ -4,6 +4,10 @@ import members from "../../grouped.json";
 export async function assignRole(client: Client, guildID: string, userID: string) {
   const guild = client.guilds.cache.get(guildID); // Replace with your guild ID
   if (!guild) return console.error("Guild not found.");
+  if (!members) {
+    console.error("You should run get-all-members first");
+    return;
+  }
 
   try {
     const role = guild.roles.cache.find((r) => r.name === "v2"); // Replace with the role name
