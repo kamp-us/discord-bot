@@ -1,9 +1,10 @@
 {
-  "name": "discord-bot",
+  "name": "kampus-discord-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "type": "module",
+  "module": "esnext",
   "scripts": {
     "start": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",

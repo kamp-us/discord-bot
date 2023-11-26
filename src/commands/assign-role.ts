@@ -1,5 +1,6 @@
 import { Client, CommandInteraction, SlashCommandBuilder } from "discord.js";
-import members from "../../grouped.json";
+// @ts-ignore
+import members from "../../grouped.json" assert { type: "json" };
 
 export async function assignRole(client: Client, guildID: string, userID: string) {
   const guild = client.guilds.cache.get(guildID); // Replace with your guild ID
