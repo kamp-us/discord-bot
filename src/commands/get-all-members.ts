@@ -10,7 +10,10 @@ type Member = {
 
 export async function fetchAllMembers(client: Client, guildID: string) {
   const guild = client.guilds.cache.get(guildID); // Replace with your guild ID
-  if (!guild) return console.error("Guild not found.");
+  if (!guild) {
+    console.error("Guild not found.");
+    return;
+  }
   let membersCollected: Member[] = [];
 
   try {
@@ -51,7 +54,10 @@ const getAllMembers = {
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
     const guildID = interaction.guildId;
-    if (guildID === null) return console.error("Guild ID is null.");
+    if (guildID === null) {
+      console.error("Guild ID is null.");
+      return;
+    }
 
     const members = await fetchAllMembers(client, guildID);
   },

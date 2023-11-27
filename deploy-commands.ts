@@ -1,6 +1,9 @@
 import { REST, Routes } from "discord.js";
 import { readdirSync } from "fs";
 import { KAMPUS_GUILD_ID } from "./config";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const commands: any[] = [];
 const commandFiles = readdirSync("./src/commands").filter((file) => file.endsWith(".ts"));

@@ -3,7 +3,7 @@ import { setTimeout } from "timers/promises";
 import { writeFile } from "fs";
 import { formatDate } from "../utils";
 import _ from "lodash";
-import { GUNAYDIN_CHANNEL_ID } from "../utils/constants";
+import { GUNAYDIN_CHANNEL_ID } from "../../config";
 
 type Message = {
   author: string;
