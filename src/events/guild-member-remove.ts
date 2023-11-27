@@ -12,8 +12,13 @@ const guildMemberRemove = {
 
     console.log(`${member.user.tag} aramızdan ayrıldı :(`);
     gidenlerChannel.send(
-      `${bold(member.user.tag)} aramızdan ayrıldı :(\nToplam üye sayısı: ${guild.memberCount}\n
-        Ona burdan bu videoyu gönderelim\n${process.env.GIDENLER_VIDEO_LINK}}`
+      `${bold(member.user.tag)} aramızdan ayrıldı :(\nToplam üye sayısı: ${guild.memberCount}
+      ${
+        process.env.GIDENLER_VIDEO_LINK
+          ? `\nOna burdan bu videoyu gönderelim\n ${process.env.GIDENLER_VIDEO_LINK}}`
+          : ""
+      }
+      `
     );
   },
 };
