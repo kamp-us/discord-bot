@@ -8,7 +8,7 @@ module.exports = {
     .setName("gunun-sorusu")
     .setDescription("Günün sorusunu oluşturur."),
   async execute(interaction: CommandInteraction) {
-    const channel = (await interaction.client.channels.fetch("839426893547044890")) as TextChannel;
+    const channel = (await interaction.client.channels.fetch(GUNAYDIN_CHANNEL_ID)) as TextChannel;
 
     const today = new Date();
     const options = {
