@@ -2,7 +2,7 @@ import { Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "di
 import { setTimeout } from "timers/promises";
 import { writeFile } from "fs";
 import { formatDate } from "../utils";
-import _ from "lodash";
+import _, { get } from "lodash";
 import { GUNAYDIN_CHANNEL_ID } from "../../config";
 
 type Message = {
@@ -12,12 +12,17 @@ type Message = {
   createdAt: string;
 };
 
-async function fetchMessages(client: Client, channelID: string, N_DAYS_AGO = 7) {
-  const channel = (await client.channels.fetch(channelID)) as TextChannel; // Replace with your channel ID
+const getDaysAgo = (n: number) => {
   const today = new Date();
-  const endDate = new Date(today.getTime() - N_DAYS_AGO * 24 * 60 * 60 * 1000);
+  const endDate = new Date(today.getTime() - n * 24 * 60 * 60 * 1000);
   endDate.setHours(0, 0, 0, 0);
-  const endTime = endDate.getTime();
+  return endDate.getTime();
+};
+
+async function fetchMessages(client: Client, channelID: string, days = 7) {
+  const channel = (await client.channels.fetch(channelID)) as TextChannel; // Replace with your channel ID
+  // get ${days} days ago from today in milliseconds from 00:00:00
+  const nDaysAgo = getDaysAgo(days);
 
   let lastId: string | undefined;
   let messagesCollected: Message[] = [];
@@ -35,7 +40,7 @@ async function fetchMessages(client: Client, channelID: string, N_DAYS_AGO = 7) 
     }
 
     // Filter and collect messages
-    const filteredMessages = messages.filter((m) => m.createdTimestamp > endTime);
+    const filteredMessages = messages.filter((m) => m.createdTimestamp > nDaysAgo);
     filteredMessages.toJSON().forEach((m) =>
       messagesCollected.push({
         author: m.author.username,
