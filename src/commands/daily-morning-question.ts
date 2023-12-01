@@ -1,8 +1,6 @@
 import { CommandInteraction, Constants, SlashCommandBuilder, TextChannel } from "discord.js";
 import { GUNAYDIN_CHANNEL_ID } from "../../config";
 
-const allowedUsers = ["256111023939911683", "297782785396178946"];
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("gunun-sorusu")
