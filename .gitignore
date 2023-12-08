@@ -3,4 +3,3 @@ node_modules
 .DS_Store
 config.ts
 .env
-grouped.json
