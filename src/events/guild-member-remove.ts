@@ -1,5 +1,4 @@
 import { Events, GuildMember, TextChannel, bold } from "discord.js";
-import { GIDENLER_CHANNEL_ID } from "../../config";
 
 const guildMemberRemove = {
   name: Events.GuildMemberRemove,
@@ -7,7 +6,9 @@ const guildMemberRemove = {
     const client = member.client;
     const guild = member.guild;
 
-    const gidenlerChannel = (await client.channels.fetch(GIDENLER_CHANNEL_ID)) as TextChannel; // Replace with your channel ID
+    const gidenlerChannel = (await client.channels.fetch(
+      process.env.GIDENLER_CHANNEL_ID ?? ""
+    )) as TextChannel; // Replace with your channel ID
     if (!gidenlerChannel) return;
 
     console.log(`${member.user.tag} aramızdan ayrıldı :(`);

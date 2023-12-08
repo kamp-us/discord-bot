@@ -2,8 +2,7 @@ import { Client, CommandInteraction, SlashCommandBuilder, TextChannel } from "di
 import { setTimeout } from "timers/promises";
 import { writeFile } from "fs";
 import { formatDate } from "../utils";
-import _, { get } from "lodash";
-import { GUNAYDIN_CHANNEL_ID } from "../../config";
+import _ from "lodash";
 
 type Message = {
   author: string;

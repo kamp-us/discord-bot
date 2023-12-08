@@ -1,7 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 // @ts-ignore
 import members from "../../grouped.json" assert { type: "json" };
-import { GIDENLER_CHANNEL_ID } from "../../config";
 
 const recycleV2Roles = {
   data: new SlashCommandBuilder()
@@ -34,7 +33,9 @@ const recycleV2Roles = {
       }
     });
 
-    const channel = interaction.client.channels.cache.get(GIDENLER_CHANNEL_ID) as TextChannel;
+    const channel = interaction.client.channels.cache.get(
+      process.env.GIDENLER_CHANNEL_ID ?? ""
+    ) as TextChannel;
     if (!channel) return;
     await channel.send(
       `Done. ${count} members were removed from v2 role. These are removed users: ${removedUsers.map(
