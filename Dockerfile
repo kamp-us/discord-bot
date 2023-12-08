@@ -25,4 +25,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
 ADD . .
 
-CMD ["./node_modules/.bin/nodemon", "index.js"]
+# CMD ["./node_modules/.bin/nodemon", "index.ts"]
+# CMD ["node", "--loader", "ts-node/esm", "index.ts"]
+CMD ["npm", "run", "dev"]
