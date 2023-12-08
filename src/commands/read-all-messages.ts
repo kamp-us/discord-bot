@@ -19,8 +19,13 @@ const getDaysAgo = (n: number) => {
   return endDate.getTime();
 };
 
-async function fetchMessages(client: Client, channelID: string, days = 7) {
-  const channel = (await client.channels.fetch(channelID)) as TextChannel; // Replace with your channel ID
+async function fetchMessages(
+  client: Client,
+  channelID: string,
+  days = 7,
+  userID: string | undefined
+) {
+  const channel = (await client.channels.fetch(channelID)) as TextChannel;
   // get ${days} days ago from today in milliseconds from 00:00:00
   const nDaysAgo = getDaysAgo(days);
 
@@ -35,12 +40,20 @@ async function fetchMessages(client: Client, channelID: string, days = 7) {
 
     // Stop if no more messages are retrieved
     if (messages.size === 0) {
+      // if there are no messages in the chat
+      if (messagesCollected.length === 0) {
+        console.log("No messages collected.");
+        return;
+      }
+      // if there are no more messages to fetch
       console.log("No more messages to fetch.");
       break;
     }
 
     // Filter and collect messages
-    const filteredMessages = messages.filter((m) => m.createdTimestamp > nDaysAgo);
+    const filteredMessages = messages.filter((m) => {
+      return m.createdTimestamp > nDaysAgo;
+    });
     filteredMessages.toJSON().forEach((m) =>
       messagesCollected.push({
         author: m.author.username,
@@ -50,22 +63,37 @@ async function fetchMessages(client: Client, channelID: string, days = 7) {
       })
     );
 
-    // Break if no messages in the current fetch are within the time range
     if (filteredMessages.size === 0) {
-      writeToFile(messagesCollected);
       const grouped = _.groupBy(messagesCollected, "uid");
+      if (userID) {
+        const options = {
+          month: "long",
+          day: "numeric",
+        };
+        const formattedDate = new Intl.DateTimeFormat("tr-TR", {
+          month: "2-digit",
+          year: "2-digit",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+        }).format(new Date());
+        writeToFile(
+          grouped[userID],
+          `./messages/u:${userID}-c:${channelID}-a:${days}-d:${formattedDate}.json`
+        );
+        return grouped[userID];
+      }
       writeToFile(grouped, "grouped.json");
-      return messagesCollected;
+      return grouped;
     }
 
     // Update lastId for the next iteration
     lastId = messages.lastKey();
-    console.log(messagesCollected.length, "messages collected so far.");
+    console.log(messagesCollected.length, " messages collected so far.");
 
     await setTimeout(1000); // Respect rate limits
   }
-
-  console.log("Finished fetching messages.");
 }
 
 async function writeToFile(
@@ -84,11 +112,23 @@ async function writeToFile(
 const getMessages = {
   data: new SlashCommandBuilder()
     .setName("get-messages")
-    .setDescription("Fetches messages from a channel"),
+    .setDescription("Fetches messages from a channel")
+    .addChannelOption((option) =>
+      option.setName("channel-name").setDescription("channel name").setRequired(true)
+    )
+    .addNumberOption((option) =>
+      option
+        .setName("days")
+        .setDescription("Number of days to fetch messages from")
+        .setRequired(true)
+    )
+    .addUserOption((option) => option.setName("user-name").setDescription("user name")),
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
-    const channelID = GUNAYDIN_CHANNEL_ID;
-    const messages = await fetchMessages(client, channelID, 14);
+    const channelID = interaction.options.get("channel-name")?.value as string;
+    const userID = interaction.options.get("user-name")?.value?.toString();
+    const days = interaction.options.get("days")?.value as number;
+    const messages = await fetchMessages(client, channelID, days, userID);
   },
 };
 
