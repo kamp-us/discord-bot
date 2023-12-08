@@ -66,10 +66,6 @@ async function fetchMessages(
     if (filteredMessages.size === 0) {
       const grouped = _.groupBy(messagesCollected, "uid");
       if (userID) {
-        const options = {
-          month: "long",
-          day: "numeric",
-        };
         const formattedDate = new Intl.DateTimeFormat("tr-TR", {
           month: "2-digit",
           year: "2-digit",
