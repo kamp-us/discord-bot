@@ -1,1 +1,0 @@
-export const KAMPUS_GUILD_ID = "717812863414042624";
