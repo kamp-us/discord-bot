@@ -1,6 +1,7 @@
 import { DiscordClient } from "../../createDiscordClient";
 import path from "path";
 import { fileURLToPath } from "url";
+import { writeFile } from "fs";
 
 export const isUserInThisGuild = async (client: DiscordClient, userID: string, guildID: string) => {
   const guild = await client.guilds.fetch(guildID);
@@ -42,4 +43,16 @@ export function formatDate(date: Date | number | string) {
   const seconds = date.getSeconds().toString().padStart(2, "0");
 
   return `${days} ${monthName} ${year}, ${hours}:${minutes}:${seconds}`;
+}
+
+export async function writeToFile(messages: any, fileName: string) {
+  let result: (NodeJS.ErrnoException | null)[] | (string | null)[] = [];
+  writeFile(fileName, JSON.stringify(messages, null, 2), (err) => {
+    if (err) {
+      result = [null, err];
+    } else {
+      result = [fileName, null];
+    }
+  });
+  return result;
 }

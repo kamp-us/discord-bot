@@ -1,5 +1,7 @@
 import { Client, TextChannel, Message } from "discord.js";
 import { formatDate } from "../utils";
+import { setTimeout } from "timers/promises";
+import _ from "lodash";
 
 const getDaysAgo = (n: number) => {
   const today = new Date();
