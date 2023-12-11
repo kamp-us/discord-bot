@@ -1,6 +1,5 @@
 import { Events, Message } from "discord.js";
 import { assignRole } from "../commands/assign-role";
-import { GUNAYDIN_CHANNEL_ID } from "../../config";
 
 const messageCreateInGunaydinChannel = {
   name: Events.MessageCreate,
@@ -12,7 +11,7 @@ const messageCreateInGunaydinChannel = {
       return;
     }
 
-    if (message.channel.id === GUNAYDIN_CHANNEL_ID) {
+    if (message.channel.id === process.env.GUNAYDIN_CHANNEL_ID) {
       const userRoles = message.member?.roles.cache.map((role) => role.name);
 
       // if user has v2 role, do nothing

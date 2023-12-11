@@ -1,9 +1,10 @@
 import { Events, Message, ThreadChannel, bold } from "discord.js";
-import { SORU_CEVAP_CHANNEL_ID } from "../../config";
 
 const isFirstMessageInSoruCevapChannel = (msg: Message, channel: ThreadChannel) => {
   return (
-    channel.messageCount === 1 && msg.position === 0 && channel.parentId === SORU_CEVAP_CHANNEL_ID
+    channel.messageCount === 1 &&
+    msg.position === 0 &&
+    channel.parentId === process.env.SORU_CEVAP_CHANNEL_ID
   );
 };
 

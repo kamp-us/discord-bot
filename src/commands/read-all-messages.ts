@@ -18,12 +18,7 @@ const getDaysAgo = (n: number) => {
   return endDate.getTime();
 };
 
-async function fetchMessages(
-  client: Client,
-  channelID: string,
-  days = 7,
-  userID: string | undefined
-) {
+async function fetchMessages(client: Client, channelID: string, days = 7, userID?: string) {
   const channel = (await client.channels.fetch(channelID)) as TextChannel;
   // get ${days} days ago from today in milliseconds from 00:00:00
   const nDaysAgo = getDaysAgo(days);
