@@ -1,30 +1,44 @@
 import _ from "lodash";
-import { CommandInteraction, SlashCommandBuilder, TextChannel, messageLink } from "discord.js";
+import {
+  CommandInteraction,
+  Message,
+  SlashCommandBuilder,
+  TextChannel,
+  messageLink,
+} from "discord.js";
 import { fetchMessages } from "../features/fetch-messages";
 import { isTodayDailyQuestionFound } from "../features/is-daily-msg-exist";
 
 const dailyMorningQuestion = {
   data: new SlashCommandBuilder()
     .setName("gunun-sorusu")
-    .setDescription("Günün sorusunu oluşturur."),
+    .setDescription("Creates 'Günün sorusu' thread.")
+    .addNumberOption((option) => option.setName("count").setDescription("Günün sorusu sayısı")),
   async execute(interaction: CommandInteraction) {
+    if (!process.env.GUNAYDIN_CHANNEL_ID) {
+      throw new Error("GUNAYDIN_CHANNEL_ID environment variable is not set.");
+    }
+
     const channel = (await interaction.client.channels.fetch(
       process.env.GUNAYDIN_CHANNEL_ID ?? ""
     )) as TextChannel;
-    const botId = "967524936551895051";
-    const now = new Date();
+    const botId = "1183616536682958899";
 
-    const messages =
-      (await fetchMessages(interaction.client, process.env.GUNAYDIN_CHANNEL_ID ?? "", 1, botId)) ||
-      [];
-    const options = {
-      month: "long",
-      day: "numeric",
-    } as Intl.DateTimeFormatOptions;
-    const formattedDate = new Intl.DateTimeFormat("tr-TR", options).format(now);
-    const questionTitle = `Günün Sorusu - ${formattedDate}`;
+    let messages = (await fetchMessages(
+      interaction.client,
+      process.env.GUNAYDIN_CHANNEL_ID,
+      1,
+      botId
+    )) as Message[];
 
-    const [isFound, m] = isTodayDailyQuestionFound(messages, formattedDate);
+    if (!messages) {
+      console.log("No messages found sent by the bot.");
+      messages = [];
+    }
+
+    const [isFound, m, c] = isTodayDailyQuestionFound(messages);
+    const count = (interaction.options.get("count")?.value as number) ?? c;
+
     if (isFound && m) {
       await interaction.deferReply({
         ephemeral: true,
@@ -37,6 +51,7 @@ const dailyMorningQuestion = {
         )}`,
       });
     } else {
+      const questionTitle = `Günün Sorusu - ${count}`;
       const threadMention = buildDailyMorningQuestion(channel, questionTitle);
       await interaction.deferReply({
         ephemeral: true,

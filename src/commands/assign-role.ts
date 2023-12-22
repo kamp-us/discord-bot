@@ -1,15 +1,9 @@
 import { Client, CommandInteraction, SlashCommandBuilder } from "discord.js";
-// @ts-ignore
-import members from "../../grouped.json" assert { type: "json" };
 
 export async function assignRole(client: Client, guildID: string, userID: string) {
   const guild = client.guilds.cache.get(guildID); // Replace with your guild ID
   if (!guild) {
     console.error("Guild not found.");
-    return;
-  }
-  if (!members) {
-    console.error("You should run get-all-members first");
     return;
   }
 
@@ -36,7 +30,8 @@ export async function assignRole(client: Client, guildID: string, userID: string
 const assignRoleCommand = {
   data: new SlashCommandBuilder()
     .setName("assign-role")
-    .setDescription("Assignes a role to a user"),
+    .setDescription("Assignes a role to a user")
+    .addUserOption((option) => option.setName("user").setDescription("User to assign role to")),
   async execute(interaction: CommandInteraction) {
     const client = interaction.client;
     const guildID = interaction.guildId;
@@ -45,12 +40,10 @@ const assignRoleCommand = {
       return;
     }
 
-    for (const member of Object.keys(members)) {
-      await assignRole(client, guildID, member);
-    }
+    const member = interaction.options.getUser("user");
 
-    console.log("Assigned roles so far: ", Object.keys(members).length);
-    console.log("Finished assigning roles.");
+    await assignRole(client, guildID, member?.id ?? "");
+    console.log("Finished assigning role.");
   },
 };
 

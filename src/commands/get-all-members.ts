@@ -29,6 +29,7 @@ export async function fetchAllMembers(client: Client, guildID: string) {
     });
     console.log("Finished fetching members. Total members:", membersCollected.length);
     writeToFile(membersCollected);
+    return membersCollected;
   } catch (error) {
     console.error("Error fetching members:", error);
   }
