@@ -1,6 +1,5 @@
 import { REST, Routes } from "discord.js";
 import { readdirSync } from "fs";
-import { KAMPUS_GUILD_ID } from "./config";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -18,17 +17,21 @@ for (const file of commandFiles) {
 if (process.env.DISCORD_TOKEN === undefined) {
   throw new Error("DISCORD_TOKEN is undefined");
 }
+
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
 
 (async (env) => {
   if (process.env.CLIENT_ID === undefined) {
     throw new Error("DISCORD_TOKEN is undefined");
   }
+  if (process.env.GUILD_ID === undefined) {
+    throw new Error("GUILD_ID is undefined");
+  }
   try {
     console.log("Started refreshing application (/) commands.");
     if (env === "production") {
       console.log("Started refreshing guild (/) commands.");
-      await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, KAMPUS_GUILD_ID), {
+      await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID), {
         body: commands,
       });
     }

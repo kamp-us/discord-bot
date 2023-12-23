@@ -2,7 +2,7 @@ name: Fly deploy
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   deploy:
@@ -10,6 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --app kampus-discord-bot --remote-only
+      - run: flyctl deploy --app bot-dev --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
