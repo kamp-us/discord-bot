@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx ./index.ts",
+    "dev": "tsx ./deploy-commands.ts && tsx ./index.ts",
     "set-secrets-dev": "flyctl secrets set --app bot-dev",
     "set-secrets": "flyctl secrets set --app kampus-discord-bot"
   },
