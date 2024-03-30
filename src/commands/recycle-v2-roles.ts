@@ -46,12 +46,8 @@ const recycleV2Roles = {
       }
     });
 
-    const removedUsersList =
-      removedUsers.length > 0
-        ? `These are returned users: ${removedUsers.map((user) => {
-            return `\n${user}`;
-          })}`
-        : "";
+    const removedUserListNames = removedUsers.join(", ");
+
 
     let message = dryRun
       ? `[DRYRUN] Done. ${count} members will be purged from v2 role.`
@@ -61,7 +57,7 @@ const recycleV2Roles = {
       process.env.GIDENLER_CHANNEL_ID
     ) as TextChannel;
     if (!channel) return;
-    await channel.send(`${message} ${removedUsersList}`);
+    await channel.send(`${message} ${removedUserListNames}`);
   },
 };
 
