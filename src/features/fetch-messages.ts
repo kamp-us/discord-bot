@@ -37,6 +37,8 @@ export async function fetchMessages(client: Client, channelID: string, days = 7,
 
       if (messages.size === 0) break;
 
+      const countOfOldMessages = messagesCollected.length;
+
       messages.forEach((m) => {
         if (m.createdTimestamp > nDaysAgo) {
           messagesCollected.push({
@@ -51,11 +53,18 @@ export async function fetchMessages(client: Client, channelID: string, days = 7,
         }
       });
 
+      const countOfNewMessages = messagesCollected.length - countOfOldMessages;
+      if(countOfNewMessages === 0){
+        console.log("No new messages found. Breaking the loop.");
+        break;
+      }
+
       // Update lastId for the next iteration
       lastId = messages.lastKey();
+      console.log("Last ID:", lastId);
       console.log(messagesCollected.length, " messages collected so far.");
 
-      await setTimeout(1000); // Respect rate limits
+      await setTimeout(3000);
     }
 
     console.log("Done. Messages collected:", messagesCollected.length);
