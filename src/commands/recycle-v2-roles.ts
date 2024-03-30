@@ -46,18 +46,22 @@ const recycleV2Roles = {
       }
     });
 
-    const removedUserListNames = removedUsers.join(", ");
-
+    let removedUserListNames = removedUsers.join(", ");
 
     let message = dryRun
       ? `[DRYRUN] Done. ${count} members will be purged from v2 role.`
-      : `Done. ${count} members were removed from v2 role.`;
+      : `Done. ${count} members were removed from v2 role.\nMembers: ${removedUserListNames}`;
 
     const channel = interaction.client.channels.cache.get(
       process.env.GIDENLER_CHANNEL_ID
     ) as TextChannel;
     if (!channel) return;
-    await channel.send(`${message} ${removedUserListNames}`);
+
+    const totalMessagePage = Math.ceil(message.length / 2000);
+    const offset = 2000;
+    for (let i = 0; i < totalMessagePage; i++) {
+      await channel.send(message.slice(i * offset, (i + 1) * offset));
+    }
   },
 };
 
